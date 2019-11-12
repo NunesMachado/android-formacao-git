@@ -1,13 +1,16 @@
 package br.com.alura.agenda.ui.activity;
 
 import android.content.Intent;
+
 import android.os.Bundle;
+
+
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -71,6 +74,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
                 Aluno alunoEcolhido = alunos.get(position);
                 Intent vaiParaFormularioActivity = new Intent(ListaAlunosActivity.this, FormularioAlunoActivity.class);
                 vaiParaFormularioActivity.putExtra("aluno", alunoEcolhido);
+                startActivity(vaiParaFormularioActivity);
             }
         });
     }
