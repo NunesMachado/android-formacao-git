@@ -38,6 +38,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
         setTitle(TITULO_APPBAR);
         configuraFabNovoAluno();
         configuraLista();
+
     }
 
     @Override
