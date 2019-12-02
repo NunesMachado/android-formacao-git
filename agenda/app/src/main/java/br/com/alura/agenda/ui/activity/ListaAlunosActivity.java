@@ -25,6 +25,7 @@ import java.util.List;
 import br.com.alura.agenda.R;
 import br.com.alura.agenda.dao.AlunoDAO;
 import br.com.alura.agenda.model.Aluno;
+import br.com.alura.agenda.ui.adapter.ListaAlunosAdapter;
 
 import static br.com.alura.agenda.ui.activity.ConstantesActivities.CHAVE_ALUNO;
 
@@ -33,7 +34,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
     public static final String TITULO_APPBAR = "Lista de Alunos";
 
     private final AlunoDAO dao = new AlunoDAO();
-    private BaseAdapter adapter;
+    private ListaAlunosAdapter adapter;
 
 
     @Override
@@ -58,7 +59,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
         int itemId = item.getItemId();
         if(itemId == R.id.activity_lista_alunos_menu_remover) {
             AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            Aluno alunoEscolhido = adapter.getItem(menuInfo.position);
+            Aluno alunoEscolhido = (Aluno) adapter.getItem(menuInfo.position);
             remove(alunoEscolhido);
         }
        return super.onContextItemSelected(item);
@@ -123,33 +124,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
     }
 
     private void configuraAdapter(ListView listaDeAlunos) {
-        adapter = new BaseAdapter() {
-
-            private final List<Aluno> alunos = new ArrayList<>();
-
-            @Override
-            public int getCount() {
-                return alunos.size();
-            }
-
-            @Override
-            public Object getItem(int position) {
-                return alunos.get(position);
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return alunos.get(position).getId();
-            }
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View viewCriada = LayoutInflater
-                        .from(ListaAlunosActivity.this)
-                        .inflate(R.layout.item_aluno, parent);
-                return viewCriada;
-            }
-        };
+        adapter = new ListaAlunosAdapter(this);
         listaDeAlunos.setAdapter(adapter);
     }
 }
