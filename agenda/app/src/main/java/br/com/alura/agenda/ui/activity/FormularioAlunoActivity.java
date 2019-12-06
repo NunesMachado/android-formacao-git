@@ -77,6 +77,7 @@ public class FormularioAlunoActivity extends AppCompatActivity {
         }else{
             dao.salva(aluno);
         }
+        finish();
     }
 
     private void inicializacaoDosCampos() {
