@@ -14,16 +14,19 @@ import br.com.alura.viagens.ui.adapter.ListaPacotesAdapter;
 
 public class ListaPacotesActivity extends AppCompatActivity {
 
-    private static final String TITULO_LISTA_PACOTES = "Pacotes";
+    private static final String TITULO_APPBAR = "Pacotes";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(TITULO_LISTA_PACOTES);
+        setTitle(TITULO_APPBAR);
         setContentView(R.layout.activity_lista_pacotes);
 
-        List<Pacote> listaPacotes = new PacoteDAO().lista();
+        configuraLista();
+    }
 
+    private void configuraLista() {
+        List<Pacote> listaPacotes = new PacoteDAO().lista();
         ListView listaDePacotes = findViewById(R.id.lista_pacotes_listview);
         listaDePacotes.setAdapter(new ListaPacotesAdapter(listaPacotes, this));
     }
