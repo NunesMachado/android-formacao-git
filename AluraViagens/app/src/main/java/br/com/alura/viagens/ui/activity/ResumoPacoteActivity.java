@@ -1,5 +1,6 @@
 package br.com.alura.viagens.ui.activity;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -40,6 +41,9 @@ public class ResumoPacoteActivity extends AppCompatActivity {
         mostraPreco(pacote);
 
         mostraData(pacote);
+
+        Intent intent = new Intent(this, PagamentoActivity.class);
+        startActivity(intent);
 
     }
 
