@@ -2,11 +2,13 @@ package br.com.alura.viagens.ui.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.alura.viagens.R;
@@ -14,6 +16,8 @@ import br.com.alura.viagens.model.Pacote;
 import br.com.alura.viagens.ui.util.DataUtil;
 import br.com.alura.viagens.ui.util.MoedaUtil;
 import br.com.alura.viagens.ui.util.ResourceUtil;
+
+import static br.com.alura.viagens.ui.activity.PacoteActivityConstantes.CHAVE_PACOTE;
 
 public class ResumoCompraActivity extends AppCompatActivity {
 
@@ -23,19 +27,24 @@ public class ResumoCompraActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resumo_compra);
-
         setTitle(TITULO_APP_BAR);
+        carregaPacoteRecebido();
 
-        Pacote pacote = new Pacote("São Paulo", "sao_paulo_sp", 2, new BigDecimal("243.99"));
+    }
 
+    private void carregaPacoteRecebido() {
+        Intent intent = getIntent();
+        if (intent.hasExtra(CHAVE_PACOTE)) {
+            Pacote pacote = (Pacote) intent.getSerializableExtra(CHAVE_PACOTE);
+            inicializaCampos(pacote);
+        }
+    }
+
+    private void inicializaCampos(Pacote pacote) {
         mostraLocal(pacote);
-
         mostraImagem(pacote);
-
         mostraData(pacote);
-
         mostraPreco(pacote);
-
     }
 
     private void mostraPreco(Pacote pacote) {
@@ -57,7 +66,7 @@ public class ResumoCompraActivity extends AppCompatActivity {
     }
 
     private void mostraLocal(Pacote pacote) {
-        TextView local =findViewById(R.id.resumo_compra_local);
+        TextView local = findViewById(R.id.resumo_compra_local);
         local.setText(pacote.getLocal());
     }
 }
