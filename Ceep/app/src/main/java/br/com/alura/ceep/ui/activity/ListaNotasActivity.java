@@ -11,7 +11,7 @@ import java.util.List;
 import br.com.alura.ceep.R;
 import br.com.alura.ceep.dao.NotaDAO;
 import br.com.alura.ceep.model.Nota;
-import br.com.alura.ceep.recyclerview.ListaNotasAdapter;
+import br.com.alura.ceep.ui.recyclerview.ListaNotasAdapter;
 
 public class ListaNotasActivity extends AppCompatActivity {
 
@@ -20,19 +20,25 @@ public class ListaNotasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_notas);
 
-        RecyclerView listaNotas = findViewById(R.id.lista_notas_recyclerview);
+        List<Nota> todasNotas = notasDeExemplo();
+        configuraRecyclerView(todasNotas);
+    }
+
+    private List<Nota> notasDeExemplo() {
         NotaDAO dao = new NotaDAO();
 
-        for (int i= 1; i <= 10000; i++){
-            dao.insere(new Nota("Título " + i,
-                    "Descrição "+ i));
+            dao.insere(new Nota("Primeira Nota ", "Descrição pequena"));
+            dao.insere(new Nota("Segunda Nota ", "Segunda descrição é bem maior do que a primeira"));
 
-        }
+        return dao.todos();
+    }
 
-        List<Nota> todasNotas = dao.todos();
+    private void configuraRecyclerView(List<Nota> todasNotas) {
+        RecyclerView listaNotas = findViewById(R.id.lista_notas_recyclerview);
+        configuraAdapter(todasNotas, listaNotas);
+    }
 
+    private void configuraAdapter(List<Nota> todasNotas, RecyclerView listaNotas) {
         listaNotas.setAdapter(new ListaNotasAdapter(this, todasNotas));
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        listaNotas.setLayoutManager(linearLayoutManager);
     }
 }
