@@ -10,10 +10,10 @@ import java.util.Calendar;
 @Entity
 public class Aluno implements Serializable {
     @PrimaryKey(autoGenerate = true)
-    private  Integer id = 0;
-    private  String nome;
+    private Integer id;
+    private String nome;
 
-    private  String email;
+    private String email;
     private Calendar momentoDeCadastro = Calendar.getInstance();
 
     public String getNome() {
@@ -56,7 +56,7 @@ public class Aluno implements Serializable {
     }
 
     public boolean temIdValido() {
-        return id > 0;
+        return id != null && id > 0;
     }
 
 }

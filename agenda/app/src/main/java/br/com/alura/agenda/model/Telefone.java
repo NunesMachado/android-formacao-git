@@ -21,8 +21,7 @@ public class Telefone {
             onDelete = CASCADE)
     private Integer idAluno;
 
-    public Telefone(String numero, TipoTelefone tipo, Integer idAluno) {
-        this.id = idAluno;
+    public Telefone(String numero, TipoTelefone tipo) {
         this.numero = numero;
         this.tipo = tipo;
     }
