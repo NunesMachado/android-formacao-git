@@ -17,6 +17,7 @@ import br.com.alura.estoque.asynctask.BaseAsyncTask;
 import br.com.alura.estoque.database.EstoqueDatabase;
 import br.com.alura.estoque.database.dao.ProdutoDAO;
 import br.com.alura.estoque.model.Produto;
+import br.com.alura.estoque.repository.ProdutoRepository;
 import br.com.alura.estoque.retrofit.EstoqueRetrofit;
 import br.com.alura.estoque.retrofit.service.ProdutoService;
 import br.com.alura.estoque.ui.dialog.EditaProdutoDialog;
@@ -30,6 +31,7 @@ public class ListaProdutosActivity extends AppCompatActivity {
     private static final String TITULO_APPBAR = "Lista de produtos";
     private ListaProdutosAdapter adapter;
     private ProdutoDAO dao;
+    private ProdutoRepository produtoRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,38 +44,11 @@ public class ListaProdutosActivity extends AppCompatActivity {
 
         EstoqueDatabase db = EstoqueDatabase.getInstance(this);
         dao = db.getProdutoDAO();
-
-        buscaProdutos();
+        produtoRepository = new ProdutoRepository(dao);
+        produtoRepository.buscaProdutos(adapter::atualiza);
     }
 
-    private void buscaProdutos() {
-        buscaProdutosInternos();
-    }
 
-    private void buscaProdutosInternos() {
-        new BaseAsyncTask<>(dao::buscaTodos,
-           resultado -> {
-               adapter.atualiza(resultado);
-               buscaProdutosNaApi();
-        }).execute();
-    }
-
-    private void buscaProdutosNaApi() {
-        ProdutoService service = new EstoqueRetrofit().getProdutoService();
-        Call<List<Produto>> call = service.buscaTodos();
-        new BaseAsyncTask<>(()->{
-            try {
-                Response<List<Produto>> resposta = call.execute();
-                List<Produto> produtosNovos = resposta.body();
-                dao.salva(produtosNovos);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return dao.buscaTodos();
-        }, produtosNovos ->
-                adapter.atualiza(produtosNovos))
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
 
     private void configuraListaProdutos() {
         RecyclerView listaProdutos = findViewById(R.id.activity_lista_produtos_lista);
@@ -97,17 +72,25 @@ public class ListaProdutosActivity extends AppCompatActivity {
     }
 
     private void abreFormularioSalvaProduto() {
-        new SalvaProdutoDialog(this, this::salva).mostra();
+        new SalvaProdutoDialog(this, produto->
+            produtoRepository.salva(produto, new ProdutoRepository.DadosCarregadosCallback<Produto>() {
+                @Override
+                public void quandoSucesso(Produto produtoSalvo) {
+                    adapter.adiciona(produtoSalvo);
+                }
+
+                @Override
+                public void quandoFalha(String erro) {
+                    Toast.makeText(ListaProdutosActivity.this,
+                            erro, 
+                            Toast.LENGTH_SHORT)
+                            .show();
+                }
+            })
+        ).mostra();
     }
 
-    private void salva(Produto produto) {
-        new BaseAsyncTask<>(() -> {
-            long id = dao.salva(produto);
-            return dao.buscaProduto(id);
-        }, produtoSalvo ->
-                adapter.adiciona(produtoSalvo))
-                .execute();
-    }
+
 
     private void abreFormularioEditaProduto(int posicao, Produto produto) {
         new EditaProdutoDialog(this, produto,
