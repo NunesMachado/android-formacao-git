@@ -1,31 +1,16 @@
 package br.com.alura.financask.ui.activity
 
-import android.app.DatePickerDialog
-import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.DatePicker
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import br.com.alura.financask.R
 import br.com.alura.financask.delegate.TransacaoDelegate
-import br.com.alura.financask.extension.formataParaBrasileiro
 import br.com.alura.financask.model.Tipo
 import br.com.alura.financask.model.Transacao
 import br.com.alura.financask.ui.ResumoView
 import br.com.alura.financask.ui.adapter.ListaTransacoesAdapter
 import br.com.alura.financask.ui.dialog.AdicionaTransacaoDialog
 import kotlinx.android.synthetic.main.activity_lista_transacoes.*
-import kotlinx.android.synthetic.main.form_transacao.view.*
-import kotlinx.android.synthetic.main.resumo_card.*
-import java.lang.NumberFormatException
-import java.math.BigDecimal
-import java.text.SimpleDateFormat
-import java.util.*
 
 class ListaTransacoesActivity : AppCompatActivity(){
 
@@ -39,18 +24,29 @@ class ListaTransacoesActivity : AppCompatActivity(){
 
         configuraLista()
 
-        lista_transacoes_adiciona_receita.setOnClickListener {
-            AdicionaTransacaoDialog(window.decorView as ViewGroup, this)
-                .configuraDialog(object : TransacaoDelegate{
-                    override fun delegate(transacao: Transacao) {
-                        atualizaTransacoes(transacao)
-                        lista_transacoes_adiciona_menu.close(true)
-                    }
+        configuraFAB()
+    }
 
-                })
+    private fun configuraFAB() {
+        lista_transacoes_adiciona_receita.setOnClickListener {
+            chamaDialogDeAdicao(Tipo.RECEITA)
+        }
+
+        lista_transacoes_adiciona_despesa.setOnClickListener {
+            chamaDialogDeAdicao(Tipo.DESPESA)
         }
     }
 
+    private fun chamaDialogDeAdicao(tipo: Tipo) {
+        AdicionaTransacaoDialog(window.decorView as ViewGroup, this)
+            .chama(tipo, object : TransacaoDelegate {
+                override fun delegate(transacao: Transacao) {
+                    atualizaTransacoes(transacao)
+                    lista_transacoes_adiciona_menu.close(true)
+                }
+
+            })
+    }
 
 
     private fun atualizaTransacoes(transacao: Transacao) {
