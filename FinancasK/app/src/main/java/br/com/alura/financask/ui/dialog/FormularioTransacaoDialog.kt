@@ -19,14 +19,15 @@ import java.lang.NumberFormatException
 import java.math.BigDecimal
 import java.util.*
 
-open class FormularioTransacaoDialog(
+abstract class FormularioTransacaoDialog(
     private val contexto: Context,
     private val viewGroup: ViewGroup?
 ) {
     private val viewCriada = criaLayout();
-    private val campoValor = viewCriada.form_transacao_valor
-    private val campoCategoria = viewCriada.form_transacao_categoria
-    private val campoData = viewCriada.form_transacao_data
+    protected val campoValor = viewCriada.form_transacao_valor
+    protected val campoCategoria = viewCriada.form_transacao_categoria
+    protected val campoData = viewCriada.form_transacao_data
+    abstract protected val tituloBotaoPositivo: String
 
     fun chama(
         tipo: Tipo,
@@ -36,6 +37,8 @@ open class FormularioTransacaoDialog(
         configuraCampoCategoria(tipo)
         configuraFormulario(tipo, transacaoDelegate)
     }
+
+
 
     private fun configuraFormulario(tipo: Tipo,
                                     transacaoDelegate: TransacaoDelegate
@@ -47,7 +50,7 @@ open class FormularioTransacaoDialog(
             .setTitle(titulo)
             .setView(viewCriada)
             .setPositiveButton(
-                "Adicionar"
+                tituloBotaoPositivo
             ) { _, _ ->
                 val valorEmTexto = campoValor.text.toString()
                 val dataEmTexto = campoData.text.toString()
@@ -70,12 +73,8 @@ open class FormularioTransacaoDialog(
             .show()
     }
 
-    private fun tituloPor(tipo: Tipo): Int {
-        if (tipo == Tipo.RECEITA) {
-          return  R.string.adiciona_receita
-        }
-        return R.string.adiciona_despesa
-    }
+    abstract protected fun tituloPor(tipo: Tipo): Int
+
 
     private fun converteCampoValor(valorEmTexto: String) : BigDecimal {
        return try {
@@ -103,7 +102,7 @@ open class FormularioTransacaoDialog(
         campoCategoria.adapter = adapter
     }
 
-    private fun categoriaPor(tipo: Tipo): Int {
+    protected fun categoriaPor(tipo: Tipo): Int {
        if (tipo == Tipo.RECEITA) {
            return R.array.categorias_de_receita
         }
