@@ -9,13 +9,11 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import br.com.alura.financask.R
-import br.com.alura.financask.delegate.TransacaoDelegate
 import br.com.alura.financask.extension.converteParaCalendar
 import br.com.alura.financask.extension.formataParaBrasileiro
 import br.com.alura.financask.model.Tipo
 import br.com.alura.financask.model.Transacao
 import kotlinx.android.synthetic.main.form_transacao.view.*
-import java.lang.NumberFormatException
 import java.math.BigDecimal
 import java.util.*
 
@@ -31,17 +29,17 @@ abstract class FormularioTransacaoDialog(
 
     fun chama(
         tipo: Tipo,
-        transacaoDelegate: TransacaoDelegate
+        delegate: (transacao: Transacao)-> Unit
     ) {
         configuraCampoData()
         configuraCampoCategoria(tipo)
-        configuraFormulario(tipo, transacaoDelegate)
+        configuraFormulario(tipo, delegate)
     }
 
 
 
     private fun configuraFormulario(tipo: Tipo,
-                                    transacaoDelegate: TransacaoDelegate
+                                    delegate: (transacao: Transacao) -> Unit
     ) {
 
         val titulo = tituloPor(tipo)
@@ -67,7 +65,7 @@ abstract class FormularioTransacaoDialog(
                     categoria = categoriaEmTexto
                 )
 
-                transacaoDelegate.delegate(transacaoCriada)
+                delegate(transacaoCriada)
             }
             .setNegativeButton("Cancelar", null)
             .show()
