@@ -24,13 +24,11 @@ class FormularioNoticiaActivity : AppCompatActivity() {
     private val noticiaId: Long by lazy {
         intent.getLongExtra(NOTICIA_ID_CHAVE, 0)
     }
-    private val repository by lazy {
-        NoticiaRepository(AppDatabase.getInstance(this).noticiaDAO)
-    }
     private val viewModel by lazy {
         val repository = NoticiaRepository(AppDatabase.getInstance(this).noticiaDAO)
         val factory = FormularioNoticiaViewModelFactory(repository)
-        ViewModelProviders.of(this,factory).get(FormularioNoticiaViewModel::class.java)
+        ViewModelProviders.of(this, factory)
+            .get(FormularioNoticiaViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +47,7 @@ class FormularioNoticiaActivity : AppCompatActivity() {
     }
 
     private fun preencheFormulario() {
-        repository.buscaPorId(noticiaId, quandoSucesso = { noticiaEncontrada ->
+        viewModel.buscaPorId(noticiaId).observe(this, Observer { noticiaEncontrada ->
             if (noticiaEncontrada != null) {
                 activity_formulario_noticia_titulo.setText(noticiaEncontrada.titulo)
                 activity_formulario_noticia_texto.setText(noticiaEncontrada.texto)
@@ -74,14 +72,13 @@ class FormularioNoticiaActivity : AppCompatActivity() {
     }
 
     private fun salva(noticia: Noticia) {
-            viewModel.salva(noticia).observe(this, Observer {
-                if(it.erro == null){
-                    finish()
-                }else{
-                    mostraErro(MENSAGEM_ERRO_SALVAR)
-                }
-            })
+        viewModel.salva(noticia).observe(this, Observer {
+            if (it.erro == null) {
+                finish()
+            } else {
+                mostraErro(MENSAGEM_ERRO_SALVAR)
+            }
+        })
     }
-
 
 }
