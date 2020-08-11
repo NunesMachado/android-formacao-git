@@ -1,5 +1,7 @@
 package br.com.alura.technews.repository
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import br.com.alura.technews.asynctask.BaseAsyncTask
 import br.com.alura.technews.database.dao.NoticiaDAO
 import br.com.alura.technews.model.Noticia
@@ -9,21 +11,33 @@ class NoticiaRepository(
     private val dao: NoticiaDAO,
     private val webclient: NoticiaWebClient = NoticiaWebClient()
 ) {
+    private val noticiasEncontradas = MutableLiveData<Resource<List<Noticia>?>>()
 
-    fun buscaTodos(
-        quandoSucesso: (List<Noticia>) -> Unit,
-        quandoFalha: (erro: String?) -> Unit
-    ) {
-        buscaInterno(quandoSucesso)
-        buscaNaApi(quandoSucesso, quandoFalha)
+    fun buscaTodos(): LiveData<Resource<List<Noticia>?>> {
+        val atualizaListaNoticia: (List<Noticia>) -> Unit = {
+            noticiasEncontradas.value = Resource(dado = it)
+        }
+        buscaInterno(quandoSucesso = atualizaListaNoticia)
+        buscaNaApi(quandoSucesso = atualizaListaNoticia,
+            quandoFalha = {
+                val resourceAtual = noticiasEncontradas.value
+                val resourceDeFalha = criaResourceDeFalha<List<Noticia>?>(resourceAtual, it)
+                noticiasEncontradas.value = resourceDeFalha
+
+            })
+        return noticiasEncontradas
     }
 
     fun salva(
-        noticia: Noticia,
-        quandoSucesso: (noticiaNova: Noticia) -> Unit,
-        quandoFalha: (erro: String?) -> Unit
-    ) {
-        salvaNaApi(noticia, quandoSucesso, quandoFalha)
+        noticia: Noticia
+    ) :LiveData<Resource<Void?>>{
+        val liveData =  MutableLiveData<Resource<Void?>>()
+        salvaNaApi(noticia, quandoSucesso = {
+            liveData.value = Resource(null)
+        },quandoFalha = {
+            liveData.value = Resource(null, it)
+        })
+        return liveData
     }
 
     fun remove(
@@ -35,11 +49,15 @@ class NoticiaRepository(
     }
 
     fun edita(
-        noticia: Noticia,
-        quandoSucesso: (noticiaEditada: Noticia) -> Unit,
-        quandoFalha: (erro: String?) -> Unit
-    ) {
-        editaNaApi(noticia, quandoSucesso, quandoFalha)
+        noticia: Noticia
+    ) : LiveData<Resource<Void?>>{
+        val liveData =  MutableLiveData<Resource<Void?>>()
+        editaNaApi(noticia, quandoSucesso = {
+           liveData.value = Resource(null)
+        }, quandoFalha = {
+            liveData.value = Resource(null,it)
+        })
+        return liveData
     }
 
     fun buscaPorId(
