@@ -11,7 +11,6 @@ import br.com.alura.technews.R
 import br.com.alura.technews.database.AppDatabase
 import br.com.alura.technews.model.Noticia
 import br.com.alura.technews.repository.NoticiaRepository
-import br.com.alura.technews.repository.SucessoResource
 import br.com.alura.technews.ui.activity.extensions.mostraErro
 import br.com.alura.technews.ui.recyclerview.adapter.ListaNoticiasAdapter
 import br.com.alura.technews.ui.viewmodel.ListaNoticiasViewModel
@@ -26,7 +25,6 @@ class ListaNoticiasActivity : AppCompatActivity() {
     private val adapter by lazy {
         ListaNoticiasAdapter(context = this)
     }
-
     private val viewModel by lazy {
         val repository = NoticiaRepository(AppDatabase.getInstance(this).noticiaDAO)
         val factory = ListaNoticiasViewModelFactory(repository)
@@ -40,10 +38,6 @@ class ListaNoticiasActivity : AppCompatActivity() {
         title = TITULO_APPBAR
         configuraRecyclerView()
         configuraFabAdicionaNoticia()
-    }
-
-    override fun onResume() {
-        super.onResume()
         buscaNoticias()
     }
 
@@ -65,10 +59,8 @@ class ListaNoticiasActivity : AppCompatActivity() {
     }
 
     private fun buscaNoticias() {
-        viewModel.buscaTodos().observe(this, Observer {resource ->
-            resource.dado?.let {
-                adapter.atualiza(it)
-            }
+        viewModel.buscaTodos().observe(this, Observer { resource ->
+            resource.dado?.let { adapter.atualiza(it) }
             resource.erro?.let {
                 mostraErro(MENSAGEM_FALHA_CARREGAR_NOTICIAS)
             }
