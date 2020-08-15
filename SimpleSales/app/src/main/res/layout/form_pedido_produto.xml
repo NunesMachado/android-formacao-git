@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/campo_nome_produto"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Nome do Produto"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <EditText
+        android:id="@+id/campo_descricaoProduto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Descricao Produto"
+        app:layout_constraintTop_toBottomOf="@id/campo_nome_produto"
+        app:layout_constraintStart_toStartOf="@id/campo_nome_produto"
+        app:layout_constraintEnd_toEndOf="@id/campo_nome_produto"
+        />
+
+    <TextView
+        android:id="@+id/label_quantidade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quantidade:"
+        android:textSize="18sp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/campo_descricaoProduto"
+        app:layout_constraintTop_toBottomOf="@id/campo_descricaoProduto"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        />
+
+    <EditText
+        android:id="@+id/campo_quantidade"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:hint="Qtd"
+        android:inputType="number"
+        app:layout_constraintStart_toEndOf="@id/label_quantidade"
+        app:layout_constraintTop_toTopOf="@id/label_quantidade"
+        app:layout_constraintBottom_toBottomOf="@id/label_quantidade"
+        />
+
+    <TextView
+        android:id="@+id/label_valor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Valor:"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/label_quantidade"
+        app:layout_constraintStart_toEndOf="@id/label_quantidade"
+        app:layout_constraintBottom_toBottomOf="@id/label_quantidade"
+        app:layout_constraintHorizontal_bias="0.6"
+        />
+
+
+    <EditText
+        android:id="@+id/campo_valor"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:hint="Vlr"
+        android:inputType="numberDecimal"
+        app:layout_constraintStart_toEndOf="@id/label_valor"
+        app:layout_constraintTop_toTopOf="@id/label_valor"
+        app:layout_constraintBottom_toBottomOf="@id/label_valor"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
