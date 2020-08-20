@@ -2,26 +2,32 @@ package br.com.me.simplesales.ui.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.me.simplesales.R
+import br.com.me.simplesales.cache.CacheProduto
 import br.com.me.simplesales.model.Pedido
 import br.com.me.simplesales.model.PedidoProduto
 import br.com.me.simplesales.ui.ResumoView
-import br.com.me.simplesales.ui.activity.ActivityConstants.ADICIONAR
-import br.com.me.simplesales.ui.activity.ActivityConstants.CANCELAR
 import br.com.me.simplesales.ui.activity.ActivityConstants.CHAVE_PEDIDO
+import br.com.me.simplesales.ui.adapter.ListaPedidoProdutoAdapter
 import br.com.me.simplesales.ui.dialog.AdicionaProdutoDialog
 import kotlinx.android.synthetic.main.activity_pedido.*
-import kotlinx.android.synthetic.main.form_pedido_produto.view.*
+import java.math.BigDecimal
 
 class PedidoActivity : AppCompatActivity() {
 
     lateinit var pedido: Pedido
 
-    val cachePedidoProduto: MutableList<PedidoProduto> = mutableListOf()
+    val cacheProduto = CacheProduto
+
+    val adapter by lazy {
+        ListaPedidoProdutoAdapter(
+            contexto = this,
+            produtos = cacheProduto.values().toMutableList()
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,15 +36,23 @@ class PedidoActivity : AppCompatActivity() {
 
         inicializaPedido()
         configuraBotaoAdicionarProduto()
-
+        configuraRecyclerView()
         configuraResumo()
+    }
 
-        val listaPedidoProduto = lista_pedido_produto
+    private fun configuraRecyclerView() {
+        val divisor = DividerItemDecoration(this, LinearLayoutManager.VERTICAL)
+        lista_pedido_produto.addItemDecoration(divisor)
+        lista_pedido_produto.adapter = adapter
+    }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        cacheProduto.clear()
     }
 
     private fun configuraResumo() {
-        val resumoView = ResumoView(view = window.decorView, produtos = cachePedidoProduto)
+        val resumoView = ResumoView(view = window.decorView, produtos = cacheProduto.values())
         resumoView.atualiza()
     }
 
@@ -46,12 +60,12 @@ class PedidoActivity : AppCompatActivity() {
         adicionar_produto.setOnClickListener {
             AdicionaProdutoDialog(contexto = this, viewGroup = window.decorView as ViewGroup)
                 .criaFormulario {
-                    cachePedidoProduto.add(it)
+                    cacheProduto.add(it)
+                    adapter.adiciona(it)
                     configuraResumo()
                 }
         }
     }
-
 
     private fun inicializaPedido() {
         intent.getParcelableExtra<Pedido>(CHAVE_PEDIDO)?.let {

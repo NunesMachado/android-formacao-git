@@ -5,5 +5,4 @@ object ActivityConstants {
     const val CHAVE_PEDIDO = "pedido"
     const val ADICIONAR = "Adcionar"
     const val CANCELAR = "Cancelar"
-
 }

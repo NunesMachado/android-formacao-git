@@ -7,7 +7,7 @@ class Resumo(val cacheProdutos: List<PedidoProduto>) {
 
     fun getValorTotalPedido(): BigDecimal {
         val soma = cacheProdutos.sumByDouble {
-            it.valor.toDouble()
+            it.total().toDouble()
         }
         return BigDecimal(soma)
     }
